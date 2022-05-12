@@ -1,0 +1,20 @@
+.flex-title {
+    display: flex;
+    flex: 100 1 100%; 
+    justify-content: center; 
+}
+
+.dark-theme-text-color {
+    color: aliceblue;
+}
+
+.search-container {
+    float: left;
+    margin-bottom: 8px;
+}
+
+input {
+    background-color: black;
+    height: 25%;
+    color: aliceblue;
+}
