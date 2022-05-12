@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 export interface userModel {
   name: string,
@@ -53,16 +54,21 @@ export class AppComponent {
   constructor() {
 
     this.users = this.allUsers;
-    this.searchValue.valueChanges.subscribe(value => {
+    this.searchValue.valueChanges
+      .pipe (
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe(value => {
 
-      const slug = 'api/get_patients';
-      const paylaod: paylaodModel = {
-        columns: ['name', 'city', 'avaliablity_status'],
-        search: value
-      }
+        const slug = 'api/get_patients';
+        const paylaod: paylaodModel = {
+          columns: ['name', 'city', 'avaliablity_status'],
+          search: value
+        }
 
-      this.callApi(slug, paylaod);
-    });
+        this.callApi(slug, paylaod);
+      });
   }
 
   toggleSearchBar() {
@@ -76,6 +82,11 @@ export class AppComponent {
     
     this.loading = true;
     setTimeout(() => {
+      if (!paylaod.search) {
+        this.users = this.allUsers;
+        if (this.loading) this.loading = false;
+        return;
+      }
 
       this.users = [];
       this.allUsers.map(user => {
